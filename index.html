@@ -40,27 +40,75 @@
 </head>
 <body>
 <div class="container">
-    <img src="eyes.png" class="eye" id="eye1" style="top: 165px; left: 150px;">
-    <img src="eyes.png" class="eye" id="eye2" style="top: 165px; left: 380px;">
+    <img src="eyes.png" class="eye" id="eye1" style="top: 175px; left: 150px;">
+    <img src="eyes.png" class="eye" id="eye2" style="top: 175px; left: 380px;">
     <img src="face.png" class="face" id="face">
 </div>
 
 <script>
+    const eye1 = document.getElementById('eye1');
+    const eye2 = document.getElementById('eye2');
+    const container = document.querySelector('.container');
+
+    const eye1Origin = { x: 150, y: 170 };
+    const eye2Origin = { x: 380, y: 170 };
+
+    const centerX = (eye1Origin.x + eye2Origin.x) / 2;
+    const centerY = (eye1Origin.y + eye2Origin.y) / 2;
+
+    const baseMaxOffsetX = 20;
+    const baseMaxOffsetY = 8;
+
+    // Current offset state
+    let currentX = 0;
+    let currentY = 0;
+
+    // Target offset to move to
+    let targetX = 0;
+    let targetY = 0;
+
+    // Smoothness factor (0 < ease < 1), lower = slower movement
+    const ease = 0.20;
+
     document.addEventListener('mousemove', (event) => {
-      const eyes = [document.getElementById('eye1'), document.getElementById('eye2')];
+      const rect = container.getBoundingClientRect();
 
-      eyes.forEach(eye => {
-        const rect = eye.getBoundingClientRect();
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
+      const mouseX = event.clientX - rect.left;
+      const mouseY = event.clientY - rect.top;
 
-        const angle = Math.atan2(event.clientY - centerY, event.clientX - centerX);
-        const moveX = Math.cos(angle) * 20; // Max 10px movement
-        const moveY = Math.sin(angle) * 10;
+      const dx = mouseX - centerX;
+      const dy = mouseY - centerY;
 
-        eye.style.transform = `translate(${moveX}px, ${moveY}px)`;
-      });
+      const angle = Math.atan2(dy, dx);
+      const angleDegrees = angle * (180 / Math.PI);
+
+      // Bias for top-right if you want (optional)
+      const isTopRight = angleDegrees > -90 && angleDegrees < 0;
+
+      const multiplierX = isTopRight ? 1.5 : 1;
+      const multiplierY = isTopRight ? 1.8 : 1;
+
+      targetX = Math.cos(angle) * baseMaxOffsetX * multiplierX;
+      targetY = Math.sin(angle) * baseMaxOffsetY * multiplierY;
     });
+
+    function animate() {
+      // Lerp current offset toward target offset
+      currentX += (targetX - currentX) * ease;
+      currentY += (targetY - currentY) * ease;
+
+      eye1.style.transform = `translate(${currentX}px, ${currentY}px)`;
+      eye2.style.transform = `translate(${currentX}px, ${currentY}px)`;
+
+      requestAnimationFrame(animate);
+    }
+
+    animate(); // start animation loop
 </script>
+
+
+
+
+
 </body>
 </html>
