@@ -55,7 +55,7 @@
         const centerY = rect.top + rect.height / 2;
 
         const angle = Math.atan2(event.clientY - centerY, event.clientX - centerX);
-        const moveX = Math.cos(angle) * 10; // Max 10px movement
+        const moveX = Math.cos(angle) * 20; // Max 10px movement
         const moveY = Math.sin(angle) * 10;
 
         eye.style.transform = `translate(${moveX}px, ${moveY}px)`;
