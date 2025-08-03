@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Interactive Eyes</title>
+    <style>
+        body {
+          margin: 0;
+          overflow: hidden;
+          background: #FFFFFF;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+        }
+
+        .container {
+          position: relative;
+          display: inline-block;
+        }
+
+        .face {
+          display: block;
+          max-width: 600px; /* or 100% */
+          width: 100%;
+          height: auto;
+          position: relative;
+          z-index: 2; /* face on top */
+        }
+
+        .eye {
+          position: absolute;
+          width: 60px;
+          height: 60px;
+          pointer-events: none;
+          transition: transform 0.05s linear;
+          z-index: 1; /* eyes behind */
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <img src="eyes.png" class="eye" id="eye1" style="top: 165px; left: 150px;">
+    <img src="eyes.png" class="eye" id="eye2" style="top: 165px; left: 380px;">
+    <img src="face.png" class="face" id="face">
+</div>
+
+<script>
+    document.addEventListener('mousemove', (event) => {
+      const eyes = [document.getElementById('eye1'), document.getElementById('eye2')];
+
+      eyes.forEach(eye => {
+        const rect = eye.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        const angle = Math.atan2(event.clientY - centerY, event.clientX - centerX);
+        const moveX = Math.cos(angle) * 10; // Max 10px movement
+        const moveY = Math.sin(angle) * 10;
+
+        eye.style.transform = `translate(${moveX}px, ${moveY}px)`;
+      });
+    });
+</script>
+</body>
+</html>
